@@ -54,12 +54,47 @@ var usage = [
 var template = [
     '\'use strict\''
   , ''
+  , 'var Config = require(\'../app/server/lib/Config\');'
+  , 'var dbConnect = require(\'../app/server/db/connect\');'
+  , ''
   , 'exports.up = function(next) {'
-  , '  next();'
+  , '  var config = new Config();',
+  , '  dbConnect(config.get(\'database\'), function migrateUp(err,conn) {'
+  , '    if(err) {'
+  , '      return next(err);'
+  , '    }'
+  , ''
+  , '    var query = ['
+  , '    ].join(\' \')'
+  , ''
+  , '    conn.master.query(query, function migrateUpComplete(err, result) {'
+  , '      if(err) {'
+  , '        return next(err);'
+  , '      }'
+  , ''
+  , '      next();'
+  , '    });'
+  , '  });'
   , '};'
   , ''
   , 'exports.down = function(next) {'
-  , '  next();'
+  , '  var config = new Config();',
+  , '  dbConnect(config.get(\'database\'), function migrateDown(err,conn) {'
+  , '    if(err) {'
+  , '      return next(err);'
+  , '    }'
+  , ''
+  , '    var query = ['
+  , '    ].join(\' \');'
+  , ''
+  , '    conn.master.query(query, function migrateDownComplete(err, result) {'
+  , '      if(err) {'
+  , '        return next(err);'
+  , '      }'
+  , ''
+  , '      next();'
+  , '    });'
+  , '  });'
   , '};'
   , ''
 ].join('\n');
@@ -218,7 +253,7 @@ function performMigration(direction, migrationName) {
   var migrationPath = migrationName
     ? join('migrations', migrationName)
     : migrationName;
- 
+
   set[direction](migrationPath);
 }
 

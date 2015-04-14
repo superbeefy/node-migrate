@@ -17,5 +17,9 @@
   "main": "index",
   "engines": {
     "node": ">= 0.4.x"
+  },
+  "dependencies": {
+    "zero-config": "~6.0.2",
+    "mysql": "~2.6.1"
   }
 }
